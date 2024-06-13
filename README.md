@@ -19,6 +19,3 @@ The online management system for book borrowings will revolutionize the way the 
 - Real-Time Data for Administrators
   - Access to up-to-date information on borrowed items and user accounts.
   - Enhances efficiency for both users and library administrators.
-
-
-**This system will make the borrowing process more efficient, improving the overall user experience and simplifying management tasks for the library staff.**

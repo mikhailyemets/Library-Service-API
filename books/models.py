@@ -1,4 +1,7 @@
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from telegram_bot.bot import send_telegram_message
 
 
 class Author(models.Model):
@@ -50,3 +53,10 @@ class Book(models.Model):
                 f"Inventory: {self.inventory}, "
                 f"Daily Fee: {self.daily_fee} $")
 
+
+@receiver(post_save, sender=Book)
+def send_telegram_notification(sender, instance, created, **kwargs):
+    if created:
+        book_title = instance.title
+        message = f"New Book: {book_title} was added to the Library!"
+        send_telegram_message(message)

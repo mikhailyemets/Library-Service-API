@@ -4,6 +4,10 @@ from django.db.models import Q, F
 
 from books.models import Book
 
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from telegram_bot.bot import send_telegram_message
+
 
 class Borrowing(models.Model):
     borrow_date = models.DateField(auto_now_add=True)
@@ -31,3 +35,11 @@ class Borrowing(models.Model):
 
     def __str__(self):
         return f"Borrowing id: {self.id}  (expired: {self.expected_return_date})"
+
+
+@receiver(post_save, sender=Borrowing)
+def send_telegram_notification_borrowing(sender, instance, created, **kwargs):
+    if created:
+        borrowing_info = f"ID: {instance.id}, User: {instance.user.username}, Book: {instance.book.title}, Expected Return Date: {instance.expected_return_date}"
+        message = f"New Borrowing: {borrowing_info}"
+        send_telegram_message(message)

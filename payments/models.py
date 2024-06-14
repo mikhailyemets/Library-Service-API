@@ -10,7 +10,7 @@ class Payment(models.Model):
         PAYMENT = 'PAYMENT', 'Payment'
         FINE = 'FINE', 'Fine'
 
-    borrowing = models.ForeignKey('borrowings.Borrowing', on_delete=models.CASCADE)
+    borrowing = models.OneToOneField('borrowings.Borrowing', on_delete=models.CASCADE)
     status = models.CharField(max_length=10, choices=Status.choices, default=Status.PENDING)
     type = models.CharField(max_length=10, choices=Type.choices, default=Type.PAYMENT)
     session_url = models.URLField()

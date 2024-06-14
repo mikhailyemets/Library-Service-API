@@ -95,7 +95,6 @@ class TestPaymentsUser(APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
 
-
     def test_list(self):
         payment = create_payment(
             borrowing=self.user,

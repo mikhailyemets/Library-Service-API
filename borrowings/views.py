@@ -15,7 +15,6 @@ class BorrowingViewSet(
     GenericViewSet
 ):
     queryset = Borrowing.objects.select_related("book", "user")
-    serializer_class = BorrowingSerializer
 
     def get_serializer_class(self):
         if self.action == "list":

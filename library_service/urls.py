@@ -26,4 +26,5 @@ if not settings.TESTING:
     urlpatterns = [
         *urlpatterns,
         path("__debug__/", include("debug_toolbar.urls")),
+        path("api/user/", include("user.urls", namespace="user")),
     ]

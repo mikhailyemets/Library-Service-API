@@ -59,4 +59,3 @@ def send_telegram_notification(sender, instance, created, **kwargs):
     if created:
         book_title = instance.title
         send_telegram_message(book_title)
-

@@ -1,12 +1,16 @@
+from datetime import date, timedelta
+
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from faker import Faker
 from rest_framework.test import APITestCase
 
+from books.models import Book
+from borrowings.models import Borrowing
 from payments.models import Payment
 from payments.serializers import PaymentListSerializer, PaymentRetrieveSerializer
 
-PAYMENTS = "payments-read"
+PAYMENTS = "payments"
 
 
 def create_user(
@@ -24,7 +28,7 @@ def create_user(
 
 
 def create_payment(
-    borrowing=None,
+    borrowing: Borrowing,
     status=Payment.Status.PENDING,
     payment_type=Payment.Type.PAYMENT,
     session_url="test_session_url",
@@ -41,38 +45,79 @@ def create_payment(
     )
 
 
+def create_borrowing(
+        book,
+        user,
+        expected_return_date=date.today() + timedelta(days=1)
+):
+    return Borrowing.objects.create(
+        book=book,
+        user=user,
+        expected_return_date=expected_return_date
+    )
+
+
+def create_book(
+        title="Test Book",
+):
+    return Book.objects.create(
+        title=title,
+        cover=Book.COVER_CHOICES[0][0],
+        inventory=10,
+        daily_fee=10
+    )
+
+
 class TestPaymentUnauthorized(APITestCase):
     def test_retrieve(self):
         url = reverse(f"payments:{PAYMENTS}-detail", kwargs={"pk": 1})
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 403)
 
     def test_list(self):
         url = reverse(f"payments:{PAYMENTS}-list")
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 403)
 
 
 class TestPaymentsUser(APITestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+
+        cls.fake = Faker().unique
+        user = create_user(cls.fake.user_name(), cls.fake.email())
+        for _ in range(5):
+            borrowing = create_borrowing(
+                user=user,
+                book=create_book(cls.fake.word()),
+                expected_return_date=date.today() + timedelta(days=1)
+            )
+            create_payment(
+                borrowing=borrowing,
+                session_url=cls.fake.url(),
+                session_id=cls.fake.uuid4()
+            )
+
     def setUp(self):
         self.user = create_user()
         self.client.force_authenticate(user=self.user)
-        self.fake = Faker().unique
 
-        user = create_user()
-        for _ in range(5):
-            create_payment(
-                borrowing=user,
-                session_url=self.fake.url(),
-                session_id=self.fake.uuid4()
-            )
-
-    def test_self_retrieve(self):
+    def create_payment(self, user):
+        borrowing = create_borrowing(
+            user=user,
+            book=create_book(self.fake.word()),
+            expected_return_date=date.today() + timedelta(days=1)
+        )
         payment = create_payment(
-            borrowing=self.user,
+            borrowing=borrowing,
             session_url=self.fake.url(),
             session_id=self.fake.uuid4()
         )
+        return payment
+
+    def test_self_retrieve(self):
+        payment = self.create_payment(self.user)
         url = reverse(f"payments:{PAYMENTS}-detail", kwargs={"pk": payment.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -85,19 +130,20 @@ class TestPaymentsUser(APITestCase):
             username=self.fake.user_name(),
             email=self.fake.email()
         )
-        payment = create_payment(
-            borrowing=user,
-            session_url=self.fake.url(),
-            session_id=self.fake.uuid4()
-        )
+        payment = self.create_payment(user)
 
         url = reverse(f"payments:{PAYMENTS}-detail", kwargs={"pk": payment.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
 
     def test_list(self):
+        borrowing = create_borrowing(
+            user=self.user,
+            book=create_book(self.fake.word()),
+            expected_return_date=date.today() + timedelta(days=1)
+        )
         payment = create_payment(
-            borrowing=self.user,
+            borrowing=borrowing,
             session_url=self.fake.url(),
             session_id=self.fake.uuid4()
         )
@@ -107,7 +153,7 @@ class TestPaymentsUser(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()), 1)
 
-        serializer = PaymentListSerializer([payment])
+        serializer = PaymentListSerializer([payment], many=True)
         self.assertEqual(response.json(), serializer.data)
 
 
@@ -123,8 +169,13 @@ class TestPaymentsAdmin(APITestCase):
         )
 
         for _ in range(5):
+            borrowing = create_borrowing(
+                user=user,
+                book=create_book(self.fake.word()),
+                expected_return_date=date.today() + timedelta(days=1)
+            )
             self.payment = create_payment(
-                borrowing=user,
+                borrowing=borrowing,
                 session_url=self.fake.url(),
                 session_id=self.fake.uuid4()
             )

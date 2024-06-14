@@ -40,9 +40,11 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
         book = attrs["book"]
         expected_return_date = attrs["expected_return_date"]
         if book.inventory < 1:
-            raise ValidationError({"book_inventory": f"Book inventory is less than 1"})
+            raise ValidationError({"book_inventory": "Book inventory is less than 1"})
         if expected_return_date <= date.today():
-            raise ValidationError({"expected_return_date": f"Expected return date should be more than today"})
+            raise ValidationError(
+                {"expected_return_date": "Expected return date should be more than today"}
+            )
 
         return attrs
 

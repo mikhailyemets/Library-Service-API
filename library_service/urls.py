@@ -22,7 +22,7 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('books.urls')),
-    path("api/", include("borrowings.urls", namespace="borrowings")),
+    path("api/borrowings/", include("borrowings.urls", namespace="borrowings")),
 ]
 
 if not settings.TESTING:

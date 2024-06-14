@@ -6,7 +6,7 @@ from django.db.models import ProtectedError
 from django.test import TestCase
 from django.urls import reverse
 
-from books.models import Book
+from books.models import Author, Book
 from borrowings.models import Borrowing
 
 
@@ -18,16 +18,21 @@ def detail_url(borrowing_id):
 
 
 def sample_book(**params):
+    author = Author.objects.create(
+        first_name="Sample",
+        last_name="Author"
+    )
     defaults = {
         "title": "Sample Book",
-        "author": "sample author",
         "cover": "Hard",
         "inventory": 5,
         "daily_fee": 1,
     }
     defaults.update(params)
+    book = Book.objects.create(**defaults)
+    book.authors.add(author)
 
-    return Book.objects.create(**defaults)
+    return book
 
 
 def sample_user(**params):

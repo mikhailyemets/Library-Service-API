@@ -1,11 +1,10 @@
-from rest_framework import serializers
-
-from payments.models import Payment
 from borrowings.serializers import (
-    BorrowingSerializer,
     BorrowingListSerializer,
     BorrowingRetrieveSerializer
 )
+from rest_framework import serializers
+
+from payments.models import Payment
 
 
 class PaymentSerializer(serializers.ModelSerializer):

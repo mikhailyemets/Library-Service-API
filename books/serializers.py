@@ -1,7 +1,10 @@
 from decimal import Decimal
 
-from django.core.validators import RegexValidator, MinValueValidator, \
+from django.core.validators import (
+    RegexValidator,
+    MinValueValidator,
     MaxValueValidator
+)
 from rest_framework import serializers
 from books.models import Book, Author
 
@@ -42,7 +45,7 @@ class AuthorListSerializer(serializers.ModelSerializer):
 class AuthorRetrieveSerializer(serializers.ModelSerializer):
     class Meta:
         model = Author
-        fields = ("first_name", "last_name", "full_name")
+        fields = ("id", "first_name", "last_name", "full_name")
 
 
 class BookSerializer(serializers.ModelSerializer):

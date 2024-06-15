@@ -2,9 +2,14 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
 from books.models import Book, Author
-from books.serializers import BookSerializer, AuthorSerializer, \
-    AuthorListSerializer, AuthorRetrieveSerializer, BookListSerializer, \
+from books.serializers import (
+    BookSerializer,
+    AuthorSerializer,
+    AuthorListSerializer,
+    AuthorRetrieveSerializer,
+    BookListSerializer,
     BookRetrieveSerializer
+)
 from books.permissions import IsAdminOrReadOnly
 
 

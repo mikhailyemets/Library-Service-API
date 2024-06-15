@@ -38,10 +38,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     # custom apps
     "books",
     "borrowings",
     "user",
+    "payments",
+
     # 3rd party apps
     "rest_framework",
     "rest_framework_simplejwt",

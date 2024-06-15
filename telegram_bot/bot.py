@@ -1,15 +1,14 @@
 import requests
 
 
-def send_telegram_message(book_title):
+def send_telegram_message(message: str) -> None:
     """
-    Sends a message that new instance of book was created to the Telegram bot.
-    :param book_title:
+    Sends a message to the Telegram bot depending on the object type.
+    :param message: The message to be sent.
     :return:
     """
-    token = "7131670430:AAHm9egBs0ASAXWBTnPk0uUbesWnTp5UmMY"
-    chat_id = "992655456"
-    message = f"New book: '{book_title}' was added to the Library!"
+    token = '7131670430:AAHm9egBs0ASAXWBTnPk0uUbesWnTp5UmMY'
+    chat_id = '992655456'
 
     url = f"https://api.telegram.org/bot{token}/sendMessage"
     params = {"chat_id": chat_id, "text": message}

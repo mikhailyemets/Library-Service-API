@@ -24,7 +24,6 @@ class BorrowingViewSet(
     mixins.CreateModelMixin,
     GenericViewSet
 ):
-    permission_classes = (IsAuthenticated,)
     queryset = Borrowing.objects.select_related("book", "user")
     permission_classes = [IsAuthenticated, IsAdminOrOwner]
 

@@ -4,7 +4,6 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 from books.models import Book, Author
-from books.permissions import IsAdminOrReadOnly
 
 
 BOOKS_URL = reverse("books:book-list")

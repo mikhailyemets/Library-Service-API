@@ -68,7 +68,7 @@ class TestPaymentsUser(APITestCase):
         cls.fake = Faker().unique
         user = create_user(cls.fake.user_name(), cls.fake.email())
         for _ in range(5):
-            borrowing = create_borrowing(
+            create_borrowing(
                 user=user,
                 book=create_book(cls.fake.word()),
                 expected_return_date=date.today() + timedelta(days=1)

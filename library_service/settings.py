@@ -163,7 +163,26 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=1000),
+}
+
+
+# Celery connect
+
+CELERY_TIMEZONE = "Europe/Kiev"
+
+CELERY_BROKER_URL = "redis://redis:6379/0"
+CELERY_RESULT_BACKEND = "redis://redis:6379/0"
+
+from celery.schedules import crontab
+from datetime import timedelta
+
+
+CELERY_BEAT_SCHEDULE = {
+    "my_scheduled_task": {
+        "task": "books.tasks.scheduled_task",
+        "schedule": timedelta(seconds=5),
+    },
 }
 
 # Stripe

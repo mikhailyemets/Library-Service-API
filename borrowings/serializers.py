@@ -6,6 +6,7 @@ from rest_framework.serializers import ValidationError
 
 from books.serializers import BookSerializer
 from borrowings.models import Borrowing
+from user.serializers import UserSerializer
 
 
 class BorrowingSerializer(serializers.ModelSerializer):
@@ -29,6 +30,7 @@ class BorrowingListSerializer(BorrowingSerializer):
 
 class BorrowingRetrieveSerializer(BorrowingSerializer):
     book = BookSerializer(read_only=True)
+    user = UserSerializer(read_only=True)
 
     class Meta(BorrowingSerializer.Meta):
         read_only_fields = (

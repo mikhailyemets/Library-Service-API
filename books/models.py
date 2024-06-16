@@ -2,7 +2,6 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
-from books import tasks
 from telegram_bot.bot import send_telegram_message
 
 
@@ -46,9 +45,6 @@ class Book(models.Model):
 
     class Meta:
         ordering = ["title"]
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
 
     def __str__(self):
         authors_str = ", ".join([str(author) for author in self.authors.all()])

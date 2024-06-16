@@ -25,24 +25,6 @@ def create_user(
     )
 
 
-def create_payment(
-    borrowing: Borrowing,
-    status=Payment.Status.PENDING,
-    payment_type=Payment.Type.PAYMENT,
-    session_url="test_session_url",
-    session_id="test_session_id",
-    money_to_pay=100.00
-):
-    return Payment.objects.create(
-        borrowing=borrowing,
-        status=status,
-        type=payment_type,
-        session_url=session_url,
-        session_id=session_id,
-        money_to_pay=money_to_pay
-    )
-
-
 def create_borrowing(
         book,
         user,

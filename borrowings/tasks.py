@@ -22,6 +22,7 @@ def write_borrowings_to_file(borrow_data, file_path='borrowings.txt'):
         for idx, borrowing in enumerate(borrow_data, start=1):
             file.write(f"{idx}) {borrowing}\n")
 
+
 @shared_task
 def scheduled_task():
     """

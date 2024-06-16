@@ -26,8 +26,8 @@ def send_telegram_message(message: str) -> None:
     :param message: The message to be sent.
     :return:
     """
-    token = config("TG_TOKEN")
-    chat_id = config("TG_CHAT_ID")
+    token = "7131670430:AAHm9egBs0ASAXWBTnPk0uUbesWnTp5UmMY"
+    chat_id = "992655456"
 
     url = f"https://api.telegram.org/bot{token}/sendMessage"
     params = {"chat_id": chat_id, "text": message}

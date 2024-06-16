@@ -33,8 +33,8 @@ def scheduled_task():
     write_books_to_file(books_data)
     file_path = 'books.txt'
 
-    token = config("TG_TOKEN")
-    chat_id = config("TG_CHAT_ID")
+    token = "7131670430:AAHm9egBs0ASAXWBTnPk0uUbesWnTp5UmMY"
+    chat_id = "992655456"
 
     send_telegram_file(file_path, token, chat_id)
 

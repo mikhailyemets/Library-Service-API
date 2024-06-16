@@ -48,9 +48,7 @@ class Book(models.Model):
         ordering = ["title"]
 
     def save(self, *args, **kwargs):
-        tasks.my_task.delay()
         super().save(*args, **kwargs)
-        tasks.another_task.delay()
 
     def __str__(self):
         authors_str = ", ".join([str(author) for author in self.authors.all()])

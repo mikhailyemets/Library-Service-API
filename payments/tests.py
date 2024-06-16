@@ -25,24 +25,6 @@ def create_user(
     )
 
 
-def create_payment(
-    borrowing: Borrowing,
-    status=Payment.Status.PENDING,
-    payment_type=Payment.Type.PAYMENT,
-    session_url="test_session_url",
-    session_id="test_session_id",
-    money_to_pay=100.00
-):
-    return Payment.objects.create(
-        borrowing=borrowing,
-        status=status,
-        type=payment_type,
-        session_url=session_url,
-        session_id=session_id,
-        money_to_pay=money_to_pay
-    )
-
-
 def create_borrowing(
         book,
         user,
@@ -86,15 +68,10 @@ class TestPaymentsUser(APITestCase):
         cls.fake = Faker().unique
         user = create_user(cls.fake.user_name(), cls.fake.email())
         for _ in range(5):
-            borrowing = create_borrowing(
+            create_borrowing(
                 user=user,
                 book=create_book(cls.fake.word()),
                 expected_return_date=date.today() + timedelta(days=1)
-            )
-            create_payment(
-                borrowing=borrowing,
-                session_url=cls.fake.url(),
-                session_id=cls.fake.uuid4()
             )
 
     def setUp(self):
@@ -107,12 +84,7 @@ class TestPaymentsUser(APITestCase):
             book=create_book(self.fake.word()),
             expected_return_date=date.today() + timedelta(days=1)
         )
-        payment = create_payment(
-            borrowing=borrowing,
-            session_url=self.fake.url(),
-            session_id=self.fake.uuid4()
-        )
-        return payment
+        return Payment.objects.get(borrowing=borrowing)
 
     def test_self_retrieve(self):
         payment = self.create_payment(self.user)
@@ -137,11 +109,7 @@ class TestPaymentsUser(APITestCase):
             book=create_book(self.fake.word()),
             expected_return_date=date.today() + timedelta(days=1)
         )
-        payment = create_payment(
-            borrowing=borrowing,
-            session_url=self.fake.url(),
-            session_id=self.fake.uuid4()
-        )
+        payment = Payment.objects.get(borrowing=borrowing)
 
         url = reverse(f"payments:{PAYMENTS}-list")
         response = self.client.get(url)
@@ -160,16 +128,12 @@ class TestPaymentsAdmin(APITestCase):
         user = create_user(email=cls.fake.email())
 
         for _ in range(5):
-            borrowing = create_borrowing(
+            cls.borrowing = create_borrowing(
                 user=user,
                 book=create_book(cls.fake.word()),
                 expected_return_date=date.today() + timedelta(days=1)
             )
-            cls.payment = create_payment(
-                borrowing=borrowing,
-                session_url=cls.fake.url(),
-                session_id=cls.fake.uuid4()
-            )
+        cls.payment = Payment.objects.get(borrowing=cls.borrowing)
 
     def setUp(self):
         self.user = create_user(is_staff=True, is_superuser=True)

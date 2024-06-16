@@ -27,3 +27,4 @@ stripe==9.11.0
 celery==5.3.6
 flower==2.0.1
 redis==5.0.3
+python-decouple==3.8

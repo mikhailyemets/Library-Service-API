@@ -179,10 +179,18 @@ from datetime import timedelta
 
 
 CELERY_BEAT_SCHEDULE = {
-    "my_scheduled_task": {
+    "books_task": {
         "task": "books.tasks.scheduled_task",
-        "schedule": timedelta(seconds=5),
+        "schedule": timedelta(seconds=60), #TODO CHANGE FOR PROD
     },
+    "borrowing_task": {
+        "task": "borrowings.tasks.scheduled_task",
+        "schedule": timedelta(seconds=60), #TODO CHANGE FOR PROD
+    },
+    "expired_borrowing": {
+        "task": "borrowings.tasks.send_overdue_borrowings_notification",
+        "schedule": timedelta(seconds=60),  #TODO CHANGE FOR PROD
+    }
 }
 
 # Stripe

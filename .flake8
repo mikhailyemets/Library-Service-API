@@ -8,5 +8,5 @@ exclude =
     **migrations
     venv
     tests
-    borrowings/tasks.py
-    books/tasks.py
+    ./borrowings/tasks.py
+    ./books/tasks.py

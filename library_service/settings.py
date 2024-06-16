@@ -167,4 +167,7 @@ SIMPLE_JWT = {
 }
 
 # Stripe
-STRIPE_SECRET_KEY = os.environ.get("STRIPE_SECRET_KEY")
+STRIPE_SECRET_KEY = os.environ.get(
+    "STRIPE_SECRET_KEY",
+    "sk_test_51PRXiPGh5wV0A36kfDAo7zd7slJrYqWXlqlrC3znUsDFICTv9CYTSx3aCPoJrwtgR1H06FXGOonYK2TP6CpI7qNE007bRNyaka"
+)

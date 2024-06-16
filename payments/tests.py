@@ -14,13 +14,11 @@ PAYMENTS = "payments"
 
 
 def create_user(
-        username="testuser",
         password="testpassword",
         email="testuser@localhost",
         **kwargs
 ):
     return get_user_model().objects.create_user(
-        username=username,
         password=password,
         email=email,
         **kwargs
@@ -72,12 +70,12 @@ class TestPaymentUnauthorized(APITestCase):
     def test_retrieve(self):
         url = reverse(f"payments:{PAYMENTS}-detail", kwargs={"pk": 1})
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
 
     def test_list(self):
         url = reverse(f"payments:{PAYMENTS}-list")
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 401)
 
 
 class TestPaymentsUser(APITestCase):
@@ -126,10 +124,7 @@ class TestPaymentsUser(APITestCase):
         self.assertEqual(response.json(), serializer.data)
 
     def test_other_user_retrieve(self):
-        user = create_user(
-            username=self.fake.user_name(),
-            email=self.fake.email()
-        )
+        user = create_user(email=self.fake.email())
         payment = self.create_payment(user)
 
         url = reverse(f"payments:{PAYMENTS}-detail", kwargs={"pk": payment.pk})
@@ -158,27 +153,27 @@ class TestPaymentsUser(APITestCase):
 
 
 class TestPaymentsAdmin(APITestCase):
-    def setUp(self):
-        self.user = create_user(is_staff=True, is_superuser=True)
-        self.client.force_authenticate(user=self.user)
-
-        self.fake = Faker().unique
-        user = create_user(
-            username=self.fake.user_name(),
-            email=self.fake.email()
-        )
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.fake = Faker().unique
+        user = create_user(email=cls.fake.email())
 
         for _ in range(5):
             borrowing = create_borrowing(
                 user=user,
-                book=create_book(self.fake.word()),
+                book=create_book(cls.fake.word()),
                 expected_return_date=date.today() + timedelta(days=1)
             )
-            self.payment = create_payment(
+            cls.payment = create_payment(
                 borrowing=borrowing,
-                session_url=self.fake.url(),
-                session_id=self.fake.uuid4()
+                session_url=cls.fake.url(),
+                session_id=cls.fake.uuid4()
             )
+
+    def setUp(self):
+        self.user = create_user(is_staff=True, is_superuser=True)
+        self.client.force_authenticate(user=self.user)
 
     def test_list(self):
         url = reverse(f"payments:{PAYMENTS}-list")

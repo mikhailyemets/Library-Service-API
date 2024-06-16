@@ -1,16 +1,15 @@
 from rest_framework import mixins
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import GenericViewSet
-from rest_framework.permissions import IsAuthenticated
 
 from borrowings.models import Borrowing
+from borrowings.permissions import IsAdminOrOwner
 from borrowings.serializers import (
     BorrowingSerializer,
     BorrowingListSerializer,
     BorrowingRetrieveSerializer,
     BorrowingCreateSerializer
 )
-from borrowings.permissions import IsAdminOrOwner
 
 
 class BorrowingViewSet(

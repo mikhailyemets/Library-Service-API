@@ -8,6 +8,7 @@ from books.permissions import IsAdminOrReadOnly
 
 
 BOOKS_URL = reverse("books:book-list")
+AUTHORS_URL = reverse("books:author-list")
 
 
 class BookApiTests(TestCase):
@@ -176,3 +177,62 @@ class BookApiTests(TestCase):
         }
         response = self.client.patch(url, payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_create_author_as_admin(self):
+        self.authenticate_user(is_admin=True)
+        payload = {
+            "first_name": "Lesya",
+            "last_name": "Ukrainka"
+        }
+        response = self.client.post(AUTHORS_URL, payload)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(Author.objects.filter(
+            first_name=payload["first_name"],
+            last_name=payload["last_name"]).exists()
+        )
+
+    def test_create_author_as_non_admin(self):
+        self.authenticate_user()
+        payload = {
+            "first_name": "Lesya",
+            "last_name": "Ukrainka"
+        }
+        response = self.client.post(AUTHORS_URL, payload)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_update_author_as_admin(self):
+        self.authenticate_user(is_admin=True)
+        url = reverse("books:author-detail", args=[self.author1.id])
+        payload = {
+            "first_name": "Serhiy",
+            "last_name": "Zhadan"
+        }
+        response = self.client.put(url, payload)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.author1.refresh_from_db()
+        self.assertEqual(self.author1.first_name, payload["first_name"])
+        self.assertEqual(self.author1.last_name, payload["last_name"])
+
+    def test_update_author_as_non_admin(self):
+        self.authenticate_user()
+        url = reverse("books:author-detail", args=[self.author1.id])
+        payload = {
+            "first_name": "Serhiy",
+            "last_name": "Zhadan"
+        }
+        response = self.client.put(url, payload)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_delete_author_as_admin(self):
+        self.authenticate_user(is_admin=True)
+        url = reverse("books:author-detail", args=[self.author1.id])
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(Author.objects.filter(id=self.author1.id).exists())
+
+    def test_delete_author_as_non_admin(self):
+        self.authenticate_user()
+        url = reverse("books:author-detail", args=[self.author1.id])
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertTrue(Author.objects.filter(id=self.author1.id).exists())

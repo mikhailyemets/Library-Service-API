@@ -11,7 +11,7 @@ from payments.models import Payment
 @transaction.atomic
 @receiver(post_save, sender=Borrowing, dispatch_uid="create_payment_and_stripe_session")
 def create_payment_and_stripe_session(sender, instance, **kwargs):
-    days_to_pay = instance.expected_return_date - instance.borrow_date.days
+    days_to_pay = (instance.expected_return_date - instance.borrow_date).days
     money_to_pay = int(instance.book.daily_fee * days_to_pay) * 100
     product_data = {
         'name': instance.book.title,

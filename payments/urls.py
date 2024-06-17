@@ -7,9 +7,9 @@ router = routers.DefaultRouter()
 router.register("", PaymentView, basename="payments")
 
 urlpatterns = [
-    path("", include(router.urls)),
-    path("success/<int:pk>/", SuccessPaymentView.as_view(), name="success_payments"),
+    path("success/", SuccessPaymentView.as_view(), name="success_payments"),
     path("cancel/", CancelPaymentView.as_view(), name="cancel_payment"),
+    path("", include(router.urls)),
 ]
 
 app_name = "payments"

@@ -38,7 +38,6 @@ class BorrowingAdmin(admin.ModelAdmin):
                 )
             }
         )
-
     )
 
     def get_form(self, request, obj=None, **kwargs):

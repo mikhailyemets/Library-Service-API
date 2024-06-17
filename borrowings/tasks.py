@@ -41,8 +41,8 @@ def scheduled_task():
 
     file_path = 'borrowings.txt'
 
-    token = config("TG_TOKEN")
-    chat_id = config("TG_CHAT_ID")
+    token = config("TG_TOKEN", default="1234")
+    chat_id = config("TG_CHAT_ID", default="1234")
 
     send_telegram_file(file_path, token, chat_id)
 

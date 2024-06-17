@@ -164,7 +164,6 @@ class TestPaymentsUser(APITestCase):
         self.assertEqual(Payment.objects.count(), 1)
         self.assertNotEqual(Payment.objects.first().session_url, old_payments.session_url)
 
-
     def test_other_user_retrieve(self):
         user = create_user(email=self.fake.email())
         payment = self.create_payment(user)

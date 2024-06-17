@@ -230,7 +230,10 @@ class TestSuccessPayment(APITestCase):
                 )
             )
 
-        self.assertNotEqual(Payment.objects.get(pk=old_payments.id).session_url, old_payments.session_url)
+        self.assertNotEqual(
+            Payment.objects.get(pk=old_payments.id).session_url,
+            old_payments.session_url
+        )
 
     def test_unpaid_success_payment(self):
         data = {
@@ -238,7 +241,9 @@ class TestSuccessPayment(APITestCase):
             "expected_return_date": date.today() + timedelta(days=1)
         }
         self.client.post(BORROWING_URL, data).json()
-        url = reverse(f"payments:success_{PAYMENTS}", kwargs={"pk": Payment.objects.first().id})
+        url = reverse(
+            f"payments:success_{PAYMENTS}", kwargs={"pk": Payment.objects.first().id}
+        )
         response = self.client.get(url)
         self.assertEqual(response.status_code, 404)
 

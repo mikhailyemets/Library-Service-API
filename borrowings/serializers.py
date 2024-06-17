@@ -63,8 +63,18 @@ class BorrowingCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         book = validated_data.pop("book")
         expected_return_date = validated_data.pop("expected_return_date")
-        request = self.context.get("request")
-        user = request.user
+        user = self.context.get("request").user
+        if (
+            Borrowing.objects
+                .filter(user=user)
+                .filter(actual_return_date__isnull=True)
+                .filter(expected_return_date__lt=date.today())
+                .exists()
+        ):
+            raise ValidationError(
+                {"borrowing": ("It is forbidden to create borrowing, "
+                               "user has expired borrowings")}
+            )
 
         with transaction.atomic():
             borrowing = Borrowing.objects.create(

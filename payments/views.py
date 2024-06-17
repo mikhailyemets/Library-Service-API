@@ -36,6 +36,19 @@ class PaymentView(GenericViewSet, ListModelMixin, RetrieveModelMixin):
         if self.action == 'retrieve':
             return PaymentRetrieveSerializer
 
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+
+        if instance.date_added != datetime.date.today():
+            stripe_session = create_stripe_session(request, instance.borrowing)
+            instance.session_url = stripe_session.url
+            instance.session_id = stripe_session.id
+            instance.money_to_pay = stripe_session["amount_total"] / 100
+            instance.save()
+
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
 
 class SuccessPaymentView(APIView):
     permission_classes = (IsAuthenticated,)

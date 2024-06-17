@@ -43,7 +43,7 @@ class PaymentView(GenericViewSet, ListModelMixin, RetrieveModelMixin):
             stripe_session = create_stripe_session(request, instance.borrowing)
             instance.session_url = stripe_session.url
             instance.session_id = stripe_session.id
-            instance.money_to_pay = stripe_session["amount_total"] / 100
+            instance.money_to_pay = stripe_session.amount_total / 100
             instance.save()
 
         serializer = self.get_serializer(instance)

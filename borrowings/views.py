@@ -72,7 +72,7 @@ class BorrowingViewSet(
             session_id=stripe_session.id,
             status=Payment.Status.PENDING,
             type=Payment.Type.PAYMENT,
-            money_to_pay=stripe_session["amount_total"] / 100
+            money_to_pay=stripe_session.amount_total / 100
         )
 
     @action(

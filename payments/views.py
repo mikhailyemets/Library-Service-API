@@ -4,9 +4,8 @@ import stripe
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from rest_framework import status
-from rest_framework.authentication import BasicAuthentication
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
@@ -27,6 +26,10 @@ class PaymentView(GenericViewSet, ListModelMixin, RetrieveModelMixin):
         user = self.request.user
         if not (user.is_staff or user.is_superuser):
             self.queryset = self.queryset.filter(borrowing__user=user)
+            self.queryset = self.queryset.filter(
+                borrowing__actual_return_date__isnull=False
+            )
+
         self.queryset = self.queryset.select_related("borrowing__user")
         self.queryset = self.queryset.select_related("borrowing__book")
         return self.queryset
@@ -40,7 +43,10 @@ class PaymentView(GenericViewSet, ListModelMixin, RetrieveModelMixin):
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
 
-        if instance.date_added != datetime.date.today():
+        expiered_session = instance.date_added != datetime.date.today()
+        payment_status = instance.status != Payment.Status.PAID
+
+        if payment_status and expiered_session:
             stripe_session = create_stripe_session(request, instance.borrowing)
             instance.session_url = stripe_session.url
             instance.session_id = stripe_session.id

@@ -14,7 +14,7 @@ import sys
 from datetime import timedelta
 from pathlib import Path
 from celery.schedules import crontab
-
+from decouple import config
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-0*v+$87r9r9*6h7=+fa-*_^airl$7=+)1&nhsc6(1+z9%=*-ab'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -190,6 +190,7 @@ CELERY_BEAT_SCHEDULE = {
 }
 
 # Stripe
+
 STRIPE_SECRET_KEY = os.environ.get(
     "STRIPE_SECRET_KEY",
     "sk_test_4eC39HqLyjWDarjtT1zdp7dc"

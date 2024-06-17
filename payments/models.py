@@ -26,7 +26,7 @@ class Payment(models.Model):
 
 @receiver(pre_save, sender=Payment)
 def check_payment_status_change(sender, instance, **kwargs):
-    if instance.pk:  # Проверяем, что это не создание нового объекта
+    if instance.pk:
         previous_instance = Payment.objects.get(pk=instance.pk)
         if previous_instance.status != instance.status and instance.status == Payment.Status.PAID:
             instance.notify_payment_completed = True

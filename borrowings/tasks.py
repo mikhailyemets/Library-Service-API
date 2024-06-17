@@ -68,14 +68,11 @@ def send_overdue_borrowings_notification():
     for idx, borrowing in enumerate(overdue_borrowings, start=1):
         serializer = BorrowingSerializer(borrowing)
         borrowing_data = serializer.data
-
-        borrowing_info = "----------------------\n"
-        borrowing_info += f"Overdue Borrowing {idx}: \n"
+        borrowing_info = f"Overdue Borrowing {idx}: \n"
         borrowing_info += f"User: {borrowing_data['user']}\n"
         borrowing_info += f"Book ID: {borrowing_data['book']}\n"
         borrowing_info += f"Borrow Date: {borrowing_data['borrow_date']}\n"
         borrowing_info += f"Expected Return Date: {borrowing_data['expected_return_date']}\n\n"
-        borrowing_info = "----------------------\n"
         notification_message += borrowing_info
 
         send_telegram_message(notification_message)

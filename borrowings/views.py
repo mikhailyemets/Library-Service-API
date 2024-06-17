@@ -17,6 +17,8 @@ from borrowings.serializers import (
     BorrowingRetrieveSerializer,
     BorrowingCreateSerializer
 )
+from payments.models import Payment
+from payments.service import create_stripe_session
 
 
 class BorrowingViewSet(
@@ -59,6 +61,19 @@ class BorrowingViewSet(
                 queryset = queryset.filter(is_active=False)
 
         return queryset
+
+    @transaction.atomic
+    def perform_create(self, serializer):
+        super().perform_create(serializer)
+        stripe_session = create_stripe_session(self.request, serializer.instance)
+        Payment.objects.create(
+            borrowing=serializer.instance,
+            session_url=stripe_session.url,
+            session_id=stripe_session.id,
+            status=Payment.Status.PENDING,
+            type=Payment.Type.PAYMENT,
+            money_to_pay=stripe_session.amount_total / 100
+        )
 
     @action(
         methods=["POST"],

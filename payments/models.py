@@ -28,7 +28,8 @@ class Payment(models.Model):
 def check_payment_status_change(sender, instance, **kwargs):
     if instance.pk:
         previous_instance = Payment.objects.get(pk=instance.pk)
-        if previous_instance.status != instance.status and instance.status == Payment.Status.PAID:
+        if (previous_instance.status != instance.status
+                and instance.status == Payment.Status.PAID):
             instance.notify_payment_completed = True
 
 

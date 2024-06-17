@@ -8,7 +8,7 @@ from rest_framework.test import APITestCase
 
 from books.models import Book
 from borrowings.models import Borrowing
-from borrowings.tests.test_borrowings_api import BORROWING_URL
+from borrowings.tests import BORROWING_URL
 from payments.models import Payment
 from payments.serializers import PaymentListSerializer, PaymentRetrieveSerializer
 

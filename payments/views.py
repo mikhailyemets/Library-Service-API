@@ -52,11 +52,9 @@ class PaymentView(GenericViewSet, ListModelMixin, RetrieveModelMixin):
 
 
 class SuccessPaymentView(APIView):
-    permission_classes = [AllowAny]
-    authentication_classes = []
     @staticmethod
     def get(request):
-        payment = get_object_or_404(Payment, session_id=slug)
+        payment = get_object_or_404(Payment, session_id=request.GET.get("session_id"))
         stripe.api_key = settings.STRIPE_SECRET_KEY
         payment_status = (
             stripe.checkout.Session
@@ -70,7 +68,6 @@ class SuccessPaymentView(APIView):
 
 
 class CancelPaymentView(APIView):
-    permission_classes = (IsAuthenticated,)
 
     @staticmethod
     def get(request):

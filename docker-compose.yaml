@@ -1,0 +1,43 @@
+services:
+  redis:
+    image: redis:7.2.4-alpine
+
+  django:
+    container_name: django
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    command: python manage.py runserver 0.0.0.0:8000
+    depends_on:
+      - redis
+
+  celery:
+    container_name: celery
+    build: .
+    command: celery -A library_service worker -l INFO
+    volumes:
+      - .:/app
+    depends_on:
+      - django
+
+  celery-beat:
+    container_name: celery-beat
+    build: .
+    command: celery -A library_service beat -l INFO
+    volumes:
+      - .:/app
+    depends_on:
+      - django
+
+  flower:
+    container_name: flower
+    build: .
+    command: celery -A library_service flower
+    ports:
+      - "5555:5555"
+    volumes:
+      - .:/app
+    depends_on:
+      - celery

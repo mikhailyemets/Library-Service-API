@@ -13,6 +13,7 @@ import os
 import sys
 from datetime import timedelta
 from pathlib import Path
+from celery.schedules import crontab
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -163,7 +164,29 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=1000),
+}
+
+# Celery connect
+
+CELERY_TIMEZONE = "Europe/Kiev"
+
+CELERY_BROKER_URL = "redis://redis:6379/0"
+CELERY_RESULT_BACKEND = "redis://redis:6379/0"
+
+CELERY_BEAT_SCHEDULE = {
+    "books_task": {
+        "task": "books.tasks.scheduled_task",
+        "schedule": timedelta(seconds=60),  # TODO CHANGE FOR PROD
+    },
+    "borrowing_task": {
+        "task": "borrowings.tasks.scheduled_task",
+        "schedule": timedelta(seconds=60),  # TODO CHANGE FOR PROD
+    },
+    "expired_borrowing": {
+        "task": "borrowings.tasks.send_overdue_borrowings_notification",
+        "schedule": timedelta(seconds=60),  # TODO CHANGE FOR PROD
+    }
 }
 
 # Stripe

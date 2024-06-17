@@ -28,4 +28,3 @@ def send_telegram_message(message: str) -> None:
     params = {"chat_id": chat_id, "text": message}
 
     response = requests.post(url, data=params)
-

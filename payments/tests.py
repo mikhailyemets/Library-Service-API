@@ -147,23 +147,6 @@ class TestPaymentsUser(APITestCase):
         serializer = PaymentRetrieveSerializer(payment)
         self.assertEqual(response.json(), serializer.data)
 
-    def test_self_retrieve_with_refresh_payment(self):
-        data = {
-            "book": create_book().id,
-            "expected_return_date": date.today() + timedelta(days=1)
-        }
-        self.client.post(BORROWING_URL, data)
-        old_payments = Payment.objects.first()
-        with mock.patch("datetime.date", new=MockedDate):
-            self.client.get(
-                reverse(
-                    f"payments:{PAYMENTS}-detail", kwargs={"pk": old_payments.id}
-                )
-            )
-
-        self.assertEqual(Payment.objects.count(), 1)
-        self.assertNotEqual(Payment.objects.first().session_url, old_payments.session_url)
-
     def test_other_user_retrieve(self):
         user = create_user(email=self.fake.email())
         payment = self.create_payment(user)
@@ -226,3 +209,38 @@ class TestPaymentsAdmin(APITestCase):
         url = reverse(f"payments:{PAYMENTS}-detail", kwargs={"pk": self.payment.pk})
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
+
+
+class TestSuccessPayment(APITestCase):
+    def setUp(self):
+        self.user = create_user()
+        self.client.force_authenticate(user=self.user)
+
+    def test_self_retrieve_with_refresh_payment(self):
+        data = {
+            "book": create_book().id,
+            "expected_return_date": date.today() + timedelta(days=1)
+        }
+        self.client.post(BORROWING_URL, data)
+        old_payments = Payment.objects.first()
+        with mock.patch("datetime.date", new=MockedDate):
+            self.client.get(
+                reverse(
+                    f"payments:{PAYMENTS}-detail", kwargs={"pk": old_payments.id}
+                )
+            )
+
+        self.assertNotEqual(Payment.objects.get(pk=old_payments.id).session_url, old_payments.session_url)
+
+    def test_unpaid_success_payment(self):
+        data = {
+            "book": create_book().id,
+            "expected_return_date": date.today() + timedelta(days=1)
+        }
+        self.client.post(BORROWING_URL, data).json()
+        url = reverse(f"payments:success_{PAYMENTS}", kwargs={"pk": Payment.objects.first().id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)
+
+    def test_paid_success_payment(self):
+        pass

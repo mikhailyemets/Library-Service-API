@@ -23,7 +23,7 @@ def create_stripe_session(request, instance):
 
     success_url = request.build_absolute_uri(
         reverse(
-            "payments:success_payment",
+            "payments:success_payments",
             kwargs={
                 "pk": instance.pk
             }

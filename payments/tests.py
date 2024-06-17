@@ -1,4 +1,5 @@
 from datetime import date, timedelta
+from unittest import mock
 
 from django.contrib.auth import get_user_model
 from django.urls import reverse
@@ -7,6 +8,7 @@ from rest_framework.test import APITestCase
 
 from books.models import Book
 from borrowings.models import Borrowing
+from borrowings.tests.test_borrowings_api import BORROWING_URL
 from payments.models import Payment
 from payments.serializers import PaymentListSerializer, PaymentRetrieveSerializer
 
@@ -66,6 +68,12 @@ def create_book(
     )
 
 
+class MockedDate(date):
+    @classmethod
+    def today(cls) -> date:
+        return cls(2024, 4, 9)
+
+
 class TestPaymentUnauthorized(APITestCase):
     def test_retrieve(self):
         url = reverse(f"payments:{PAYMENTS}-detail", kwargs={"pk": 1})
@@ -76,6 +84,22 @@ class TestPaymentUnauthorized(APITestCase):
         url = reverse(f"payments:{PAYMENTS}-list")
         response = self.client.get(url)
         self.assertEqual(response.status_code, 401)
+
+
+class TestBorrowingCreatePayment(APITestCase):
+
+    def setUp(self):
+        self.user = create_user(is_staff=True, is_superuser=True)
+        self.client.force_authenticate(user=self.user)
+
+    def test_create_payment_from_borrowing(self):
+        self.assertEqual(Payment.objects.count(), 0)
+        data = {
+            "book": create_book().id,
+            "expected_return_date": date.today() + timedelta(days=1)
+        }
+        self.client.post(BORROWING_URL, data)
+        self.assertEqual(Payment.objects.count(), 1)
 
 
 class TestPaymentsUser(APITestCase):
@@ -122,6 +146,24 @@ class TestPaymentsUser(APITestCase):
 
         serializer = PaymentRetrieveSerializer(payment)
         self.assertEqual(response.json(), serializer.data)
+
+    def test_self_retrieve_with_refresh_payment(self):
+        data = {
+            "book": create_book().id,
+            "expected_return_date": date.today() + timedelta(days=1)
+        }
+        self.client.post(BORROWING_URL, data)
+        old_payments = Payment.objects.first()
+        with mock.patch("datetime.date", new=MockedDate):
+            self.client.get(
+                reverse(
+                    f"payments:{PAYMENTS}-detail", kwargs={"pk": old_payments.id}
+                )
+            )
+
+        self.assertEqual(Payment.objects.count(), 1)
+        self.assertNotEqual(Payment.objects.first().session_url, old_payments.session_url)
+
 
     def test_other_user_retrieve(self):
         user = create_user(email=self.fake.email())

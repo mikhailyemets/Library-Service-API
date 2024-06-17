@@ -1,21 +1,22 @@
-from payments.service import create_stripe_session
 import datetime
+
 import stripe
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from rest_framework import status
+from rest_framework.authentication import BasicAuthentication
 from rest_framework.mixins import ListModelMixin, RetrieveModelMixin
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 
-from borrowings.models import Borrowing
 from payments.models import Payment
 from payments.serializers import (
     PaymentListSerializer,
     PaymentRetrieveSerializer
 )
+from payments.service import create_stripe_session
 
 
 class PaymentView(GenericViewSet, ListModelMixin, RetrieveModelMixin):
@@ -51,18 +52,17 @@ class PaymentView(GenericViewSet, ListModelMixin, RetrieveModelMixin):
 
 
 class SuccessPaymentView(APIView):
-    permission_classes = (IsAuthenticated,)
-    queryset = Borrowing.objects.select_related("payment")
-
-    def get(self, request, pk):
-        borrowing = get_object_or_404(self.queryset, user=request.user, id=pk)
+    permission_classes = [AllowAny]
+    authentication_classes = []
+    @staticmethod
+    def get(request):
+        payment = get_object_or_404(Payment, session_id=slug)
         stripe.api_key = settings.STRIPE_SECRET_KEY
         payment_status = (
             stripe.checkout.Session
-            .retrieve(borrowing.payment.session_id)["payment_status"]
+            .retrieve(payment.session_id).payment_status
         )
         if payment_status == "paid":
-            payment = borrowing.payment
             payment.status = Payment.Status.PAID
             payment.save()
             return Response(status=status.HTTP_200_OK)

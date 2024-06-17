@@ -21,25 +21,10 @@ def create_stripe_session(request, instance):
         }
     ]
 
-    success_url = request.build_absolute_uri(
-        reverse(
-            "payments:success_payments",
-            kwargs={
-                "pk": instance.pk
-            }
-        )
-    )
-
-    cancel_url = request.build_absolute_uri(
-        reverse(
-            "payments:cancel_payment"
-        )
-    )
-
     stripe.api_key = settings.STRIPE_SECRET_KEY
     return stripe.checkout.Session.create(
         line_items=line_items,
         mode='payment',
-        success_url=success_url,
-        cancel_url=cancel_url,
+        success_url=request.build_absolute_uri(reverse("payments:success_payments")) + "?session_id={CHECKOUT_SESSION_ID}",
+        cancel_url=request.build_absolute_uri(reverse("payments:cancel_payment"))
     )

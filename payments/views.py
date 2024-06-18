@@ -43,7 +43,7 @@ class PaymentView(GenericViewSet, ListModelMixin, RetrieveModelMixin):
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
 
-        expiered_session = instance.date_added != datetime.date.today()
+        expiered_session = instance.last_update != datetime.date.today()
         payment_status = instance.status != Payment.Status.PAID
 
         if payment_status and expiered_session:

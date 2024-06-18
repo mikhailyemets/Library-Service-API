@@ -21,7 +21,7 @@ class Payment(models.Model):
     session_url = models.URLField()
     session_id = models.CharField(max_length=100)
     money_to_pay = models.DecimalField(max_digits=10, decimal_places=2)
-    date_added = models.DateField(auto_now=True)
+    last_update = models.DateField(auto_now=True)
 
 
 @receiver(pre_save, sender=Payment)
@@ -42,7 +42,6 @@ def send_telegram_notification_payment(sender, instance, created, **kwargs):
             f"Status: {instance.get_status_display()}, "
             f"Type: {instance.get_type_display()}, "
             f"Money to Pay: {instance.money_to_pay}, "
-            f"Date Added: {instance.date_added}"
         )
         message = f"New Payment: {payment_info}"
         send_telegram_message(message)
@@ -53,7 +52,6 @@ def send_telegram_notification_payment(sender, instance, created, **kwargs):
             f"Status: {instance.get_status_display()}, "
             f"Type: {instance.get_type_display()}, "
             f"Money to Pay: {instance.money_to_pay}, "
-            f"Date Paid: {instance.date_added if instance.date_added else 'Unknown'}"
         )
         message = f"Payment Paid: {payment_info}"
         send_telegram_message(message)

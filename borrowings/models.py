@@ -41,7 +41,7 @@ class Borrowing(models.Model):
 def send_telegram_notification_borrowing(sender, instance, created, **kwargs):
     if created:
         borrowing_info = (f"ID: {instance.id}, "
-                          f"User: {instance.user.username}, "
+                          f"User: {instance.user.email}, "
                           f"Book: {instance.book.title}, "
                           f"Expected Return Date: {instance.expected_return_date}")
         message = f"New Borrowing: {borrowing_info}"

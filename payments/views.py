@@ -16,8 +16,10 @@ from payments.serializers import (
     PaymentRetrieveSerializer
 )
 from payments.service import create_stripe_session
+from payments.schemas import payment_schema, success_payment_schema, cancel_payment_schema
 
 
+@payment_schema
 class PaymentView(GenericViewSet, ListModelMixin, RetrieveModelMixin):
     permission_classes = (IsAuthenticated,)
     queryset = Payment.objects.all()
@@ -57,6 +59,7 @@ class PaymentView(GenericViewSet, ListModelMixin, RetrieveModelMixin):
         return Response(serializer.data)
 
 
+@success_payment_schema
 class SuccessPaymentView(APIView):
     @staticmethod
     def get(request):
@@ -73,6 +76,7 @@ class SuccessPaymentView(APIView):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
 
+@cancel_payment_schema
 class CancelPaymentView(APIView):
 
     @staticmethod

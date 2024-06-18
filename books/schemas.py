@@ -1,4 +1,12 @@
 from drf_spectacular.utils import extend_schema, OpenApiExample
+from .serializers import (
+    AuthorSerializer,
+    AuthorListSerializer,
+    AuthorRetrieveSerializer,
+    BookSerializer,
+    BookListSerializer,
+    BookRetrieveSerializer
+)
 
 author_schema = {
     "list": extend_schema(

@@ -14,11 +14,6 @@ def send_telegram_file(file_path: str, token: str, chat_id: str) -> None:
     with open(file_path, 'rb') as file:
         response = requests.post(url, data={"chat_id": chat_id}, files={"document": file})
 
-    if response.status_code == 200:
-        print("File sent successfully to Telegram!")
-    else:
-        print("Error sending file to Telegram.")
-
 
 def send_telegram_message(message: str) -> None:
     """
@@ -26,15 +21,10 @@ def send_telegram_message(message: str) -> None:
     :param message: The message to be sent.
     :return:
     """
-    token = "7131670430:AAHm9egBs0ASAXWBTnPk0uUbesWnTp5UmMY"
-    chat_id = "992655456"
+    token = config("TG_TOKEN", default="1234")
+    chat_id = config("TG_CHAT_ID", default="1234")
 
     url = f"https://api.telegram.org/bot{token}/sendMessage"
     params = {"chat_id": chat_id, "text": message}
 
     response = requests.post(url, data=params)
-
-    if response.status_code == 200:
-        print("Message sent successfully to Telegram!")
-    else:
-        print("Error sending message to Telegram.")

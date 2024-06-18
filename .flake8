@@ -10,3 +10,4 @@ exclude =
     tests
     ./borrowings/tasks.py
     ./books/tasks.py
+    ./telegram_bot/bot.py

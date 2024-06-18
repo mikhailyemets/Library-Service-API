@@ -11,7 +11,7 @@ app.autodiscover_tasks()
 app.conf.beat_schedule = {
     "books_task": {
         "task": "books.tasks.scheduled_task",
-        "schedule": crontab(hour=11, minute=52) # TODO CHANGE FOR PROD
+        "schedule": crontab(hour=11, minute=52)  # TODO CHANGE FOR PROD
     },
     "borrowing_task": {
         "task": "borrowings.tasks.scheduled_task",

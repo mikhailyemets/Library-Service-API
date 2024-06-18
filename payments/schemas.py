@@ -57,7 +57,6 @@ success_payment_schema = extend_schema_view(
                 "Success Example",
                 summary="Example response for successful payment.",
                 description="A sample example of a successful payment.",
-                value={"detail": "Payment successful."},
             )
         ],
     ),

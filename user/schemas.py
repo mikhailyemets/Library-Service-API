@@ -1,4 +1,10 @@
-from drf_spectacular.utils import extend_schema, OpenApiExample
+from drf_spectacular.utils import (
+    extend_schema,
+    OpenApiExample,
+    extend_schema_view
+)
+
+from user.serializers import UserSerializer, AuthTokenSerializer
 
 create_user_schema = extend_schema_view(
     post=extend_schema(

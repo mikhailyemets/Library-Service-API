@@ -1,6 +1,13 @@
-from drf_spectacular.utils import extend_schema, OpenApiExample, extend_schema_view
+from drf_spectacular.utils import (
+    extend_schema,
+    OpenApiExample,
+    extend_schema_view
+)
 
-from payments.serializers import PaymentRetrieveSerializer, PaymentListSerializer
+from payments.serializers import (
+    PaymentRetrieveSerializer,
+    PaymentListSerializer
+)
 
 
 payment_schema = extend_schema_view(
@@ -70,7 +77,8 @@ cancel_payment_schema = extend_schema_view(
                 "Cancel Example",
                 summary="Example response for canceled payment.",
                 description="A sample example of a canceled payment.",
-                value={"detail": "Payment can be made later. The session is available for only 24 hours."},
+                value={"detail": "Payment can be made later."
+                                 "The session is available for only 24 hours."},
             )
         ],
     ),

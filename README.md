@@ -60,8 +60,8 @@ ___
    
 3. (Optional) use my sample of prefilled DB:
    ```sh
-   python manage.py loaddata library.json
-   python manage.py loaddata user.json
+   python manage.py fill_authors
+   python manage.py fill_books
    ```
    
 4. Start the server:
@@ -73,12 +73,12 @@ ___
 
 ##### For creating user you should:
 1. Go to one of these link:
-   - Register user: http://localhost:8000/users/register
-   - Get token: http://localhost:8000/users/token
+   - Register user: /users/register
+   - Get token: /users/token
 
 ### Token Management
-- Refresh your token when it expires using the following URL: http://localhost:8000/users/token/refresh
-- Get information about yourself using the following URL: http://localhost:8000/users/token/me
+- Refresh your token when it expires using the following URL: /users/token/refresh
+- Get information about yourself using the following URL: //localhost:8000/users/token/me
 
    
 ### Docker local installation:

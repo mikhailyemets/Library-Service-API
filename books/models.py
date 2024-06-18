@@ -33,12 +33,13 @@ class Book(models.Model):
         max_length=255,
         related_name="books"
     )
+
     cover = models.CharField(
         max_length=4,
         choices=COVER_CHOICES,
         default="Hard"
     )
-    inventory = models.PositiveIntegerField()
+    inventory = models.PositiveSmallIntegerField()
     daily_fee = models.DecimalField(
         max_digits=6,
         decimal_places=2)

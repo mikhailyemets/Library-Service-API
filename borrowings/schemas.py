@@ -1,7 +1,11 @@
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema, OpenApiExample, extend_schema_view, OpenApiParameter
 
-from borrowings.serializers import BorrowingCreateSerializer, BorrowingRetrieveSerializer, BorrowingListSerializer
+from borrowings.serializers import (
+    BorrowingCreateSerializer,
+    BorrowingRetrieveSerializer,
+    BorrowingListSerializer
+)
 
 
 borrowing_schema = extend_schema_view(

@@ -1,4 +1,7 @@
-from drf_spectacular.utils import extend_schema, OpenApiExample
+from drf_spectacular.utils import extend_schema, OpenApiExample, extend_schema_view
+
+from payments.serializers import PaymentRetrieveSerializer, PaymentListSerializer
+
 
 payment_schema = extend_schema_view(
     list=extend_schema(
@@ -12,18 +15,16 @@ payment_schema = extend_schema_view(
                     {
                         "id": 1,
                         "borrowing": {"id": 1, "book": "The Great Gatsby"},
-                        "session_url": "http://stripe.com/session1",
                         "status": "pending",
                         "money_to_pay": "10.00",
-                        "date_added": "2023-01-01"
+                        "last_update": "2023-01-01"
                     },
                     {
                         "id": 2,
                         "borrowing": {"id": 2, "book": "1984"},
-                        "session_url": "http://stripe.com/session2",
                         "status": "paid",
                         "money_to_pay": "15.00",
-                        "date_added": "2023-01-05"
+                        "last_update": "2023-01-05"
                     },
                 ],
             )
@@ -39,10 +40,9 @@ payment_schema = extend_schema_view(
                 value={
                     "id": 1,
                     "borrowing": {"id": 1, "book": "The Great Gatsby"},
-                    "session_url": "http://stripe.com/session1",
                     "status": "pending",
                     "money_to_pay": "10.00",
-                    "date_added": "2023-01-01"
+                    "last_update": "2023-01-01"
                 },
             )
         ],
@@ -76,4 +76,3 @@ cancel_payment_schema = extend_schema_view(
         ],
     ),
 )
-

@@ -18,7 +18,7 @@ class PaymentListSerializer(serializers.ModelSerializer):
             'status',
             'type',
             "money_to_pay",
-            "date_added"
+            "last_update"
         )
 
 

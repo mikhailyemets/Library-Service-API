@@ -18,8 +18,8 @@ class Payment(models.Model):
                                      related_name='payment')
     status = models.CharField(max_length=10, choices=Status.choices, default=Status.PENDING)
     type = models.CharField(max_length=10, choices=Type.choices, default=Type.PAYMENT)
-    session_url = models.URLField()
-    session_id = models.CharField(max_length=100)
+    session_url = models.URLField(max_length=500)
+    session_id = models.CharField(max_length=350)
     money_to_pay = models.DecimalField(max_digits=10, decimal_places=2)
     last_update = models.DateField(auto_now=True)
 
@@ -51,7 +51,7 @@ def send_telegram_notification_payment(sender, instance, created, **kwargs):
             f"Borrowing ID: {instance.borrowing.id}, "
             f"Status: {instance.get_status_display()}, "
             f"Type: {instance.get_type_display()}, "
-            f"Money to Pay: {instance.money_to_pay}, "
+            f"Paid: {instance.money_to_pay}, "
         )
         message = f"Payment Paid: {payment_info}"
         send_telegram_message(message)

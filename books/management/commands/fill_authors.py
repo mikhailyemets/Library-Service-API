@@ -6,11 +6,11 @@ from books.models import Author
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        faker = Faker().unique
+        fake = Faker().unique
         authors = [
             Author(
-                first_name=faker.first_name(),
-                last_name=faker.last_name()
+                first_name=fake.first_name(),
+                last_name=fake.last_name()
             )
             for _ in range(10)
         ]

@@ -19,8 +19,10 @@ from borrowings.serializers import (
 )
 from payments.models import Payment
 from payments.service import create_stripe_session
+from borrowings.schemas import borrowing_schema
 
 
+@borrowing_schema
 class BorrowingViewSet(
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,

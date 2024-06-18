@@ -66,8 +66,6 @@ class BorrowingViewSet(
     def perform_create(self, serializer):
         super().perform_create(serializer)
         stripe_session = create_stripe_session(self.request, serializer.instance)
-        print(stripe_session.url)
-        print(stripe_session.id)
         Payment.objects.create(
             borrowing=serializer.instance,
             session_url=stripe_session.url,
